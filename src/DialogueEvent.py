@@ -1,5 +1,6 @@
 import json
 from util import parse_attribute_string
+from util import parsing_condition_string
 
 # 给定 example_json_str = """{"prefix": "糖糖: 嘿嘿，最近我在想要不要改变直播风格，你觉得我应该怎么做呀？", "options": [{"user": "你可以试试唱歌直播呀！", "reply": "糖糖: 哇！唱歌直播是个好主意！我可以把我的可爱音色展现给大家听听！谢谢你的建议！", "attribute_change": "Stress: -1.0"}, {"user": "你可以尝试做一些搞笑的小品，逗大家开心。", "reply": "糖糖: 哈哈哈，小品确实挺有趣的！我可以挑战一些搞笑角色，给大家带来欢乐！谢谢你的建议！", "attribute_change": "Stress: -1.0"}, {"user": "你可以尝试做游戏直播，和观众一起玩游戏。", "reply": "糖糖: 游戏直播也不错！我可以和观众一起玩游戏，互动更加有趣！谢谢你的建议！", "attribute_change": "Stress: -1.0"}]}"""
 
@@ -26,8 +27,16 @@ class DialogueEvent:
         else:
             self.data = {}
 
-        if "Condition" not in self.data:
-            self.data["Condition"] = ""
+        if "condition" not in self.data:
+            if "category" in self.data:
+                self.data["condition"] = parsing_condition_string( self.data["category"] )
+            else:
+                self.data["condition"] = None
+
+        if "name" not in self.data:
+            self.data["name"] = ""
+        else:
+            self.data["name"] = self.data["id"].strip()
 
         if "prefix" in self.data:
             self.data["prefix"] = self.data["prefix"].replace("：",":")
