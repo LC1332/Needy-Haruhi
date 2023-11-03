@@ -34,9 +34,13 @@ class DialogueEvent:
                 self.data["condition"] = None
 
         if "name" not in self.data:
-            self.data["name"] = ""
-        else:
-            self.data["name"] = self.data["id"].strip()
+            if "id" in self.data:
+                self.data["name"] = self.data["id"]
+            else:
+                self.data["name"] = ""
+
+        if "prefix_emoji" not in self.data:
+            self.data["prefix_emoji"] = "📄"
 
         if "prefix" in self.data:
             self.data["prefix"] = self.data["prefix"].replace("：",":")
@@ -46,6 +50,8 @@ class DialogueEvent:
                 option["user"] = option["user"].strip(" ：")
             if "reply" in option:
                 option["reply"] = option["reply"].replace("：",":")
+            if "opt_emoji" not in option:
+                option["opt_emoji"] = "📄"
 
 
         if user_role is None:
@@ -82,8 +88,10 @@ class DialogueEvent:
                choice_id = i
 
         return choice_id
-
-
+    
+    def get_emoji( self, choice_id ):
+        return self.data["prefix_emoji"] + self.data["options"][choice_id]["opt_emoji"]
+    
     def transfer_output( self, choice_id ):
         ans = self.data["prefix"] + "\n"
         user_text = self.user_role + ": " + self.data["options"][choice_id]["user"] + "\n"
