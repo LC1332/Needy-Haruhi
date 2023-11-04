@@ -50,8 +50,8 @@ class DialogueEvent:
                 option["user"] = option["user"].strip(" ：")
             if "reply" in option:
                 option["reply"] = option["reply"].replace("：",":")
-            if "opt_emoji" not in option:
-                option["opt_emoji"] = "📄"
+            if "option_emoji" not in option:
+                option["option_emoji"] = "📄"
 
 
         if user_role is None:
@@ -90,7 +90,7 @@ class DialogueEvent:
         return choice_id
     
     def get_emoji( self, choice_id ):
-        return self.data["prefix_emoji"] + self.data["options"][choice_id]["opt_emoji"]
+        return self.data["prefix_emoji"] + self.data["options"][choice_id]["option_emoji"]
     
     def transfer_output( self, choice_id ):
         ans = self.data["prefix"] + "\n"
@@ -102,4 +102,9 @@ class DialogueEvent:
         return ans
 
     def most_neutral_output(self):
-        return self.transfer_output( self.get_most_neutral() )
+        neutral_id = self.get_most_neutral()
+        return self.transfer_output( neutral_id ), self.get_emoji( neutral_id )
+    
+    def get_text_and_emoji(self, choice_id):
+        return self.transfer_output(choice_id), self.get_emoji( choice_id )
+    
