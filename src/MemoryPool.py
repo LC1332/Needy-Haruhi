@@ -91,11 +91,13 @@ class MemoryPool:
                 self.memories[memory['name']] = memory
 
 
-    def change_memory( self, memory_name , new_text ):
+    def change_memory( self, memory_name , new_text , new_emoji = None):
         if memory_name in self.memories:
             memory = self.memories[memory_name]
             memory["text"] = new_text
             memory["embedding"] = self.embedding( new_text )
+            if new_emoji:
+                memory["emoji"] = new_emoji
 
     def retrieve( self, agent, query_text ):
         query_embedding = self.embedding( query_text )
