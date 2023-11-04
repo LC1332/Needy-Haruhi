@@ -88,3 +88,76 @@ def parsing_condition_string(s):
         return (attribute, min_value, max_value)
     
     return None  # 如果没有匹配则返回None
+
+
+#------ BGE Embedding -----------
+
+from transformers import AutoModel, AutoTokenizer
+import torch
+
+_bge_model_zh = None
+_bge_tokenizer_zh = None
+
+def get_bge_embeddings_zh( sentences ):
+    # unsafe ensure batch size by yourself
+
+    global _bge_model_zh
+    global _bge_tokenizer_zh
+
+    if _bge_model_zh is None:
+        from transformers import AutoTokenizer, AutoModel
+        _bge_tokenizer_zh = AutoTokenizer.from_pretrained('BAAI/bge-small-zh-v1.5')
+        _bge_model_zh = AutoModel.from_pretrained('BAAI/bge-small-zh-v1.5')
+
+    _bge_model_zh.eval()
+
+    # Tokenize sentences
+    encoded_input = _bge_tokenizer_zh(sentences, padding=True, truncation=True, return_tensors='pt', max_length = 512)
+
+    # Compute token embeddings
+    with torch.no_grad():
+        model_output = _bge_model_zh(**encoded_input)
+        # Perform pooling. In this case, cls pooling.
+        sentence_embeddings = model_output[0][:, 0]
+    # normalize embeddings
+    sentence_embeddings = torch.nn.functional.normalize(sentence_embeddings, p=2, dim=1)
+    return sentence_embeddings.cpu().tolist()
+
+def get_bge_embedding_zh( text_or_texts ):
+    if isinstance(text_or_texts, str):
+        return get_bge_embeddings_zh([text_or_texts])[0]
+    else:
+        return get_bge_embeddings_zh(text_or_texts)
+
+
+# Encode和Decode的代码来自于ChatHaruhi
+
+import base64
+import struct
+
+def float_array_to_base64(float_arr):
+    
+    byte_array = b''
+    
+    for f in float_arr:
+        # 将每个浮点数打包为4字节
+        num_bytes = struct.pack('!f', f)  
+        byte_array += num_bytes
+    
+    # 将字节数组进行base64编码    
+    base64_data = base64.b64encode(byte_array)
+    
+    return base64_data.decode('utf-8')
+
+def base64_to_float_array(base64_data):
+
+    byte_array = base64.b64decode(base64_data)
+    
+    float_array = []
+    
+    # 每 4 个字节解析为一个浮点数
+    for i in range(0, len(byte_array), 4):
+        num = struct.unpack('!f', byte_array[i:i+4])[0] 
+        float_array.append(num)
+
+    return float_array
