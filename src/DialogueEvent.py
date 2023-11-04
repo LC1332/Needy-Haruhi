@@ -2,6 +2,38 @@ import json
 from util import parse_attribute_string
 from util import parsing_condition_string
 
+# 我希望实现一个python函数
+
+# 分析一个字符串中有没有":"
+
+# 如果有，我希望在第一个":"的位置分开成str_left和str_right，并以f"{str_left}:「{str_right}」"的形式输出
+
+# 例子输入
+# 爸爸:我真棒 
+# 例子输出
+# 爸爸:「我真棒」
+# 例子输入
+# 这一句没有冒号
+# 例子输出
+# :「这一句没有冒号」
+
+def wrap_text_with_colon(text):
+    # 查找冒号在字符串中的位置
+    colon_index = text.find(":")
+    
+    # 如果找到了冒号
+    if colon_index != -1:
+        # 分割字符串为左右两部分
+        str_left = text[:colon_index]
+        str_right = text[colon_index+1:]
+        # 构造新的格式化字符串
+        result = f"{str_left}:「{str_right}」"
+    else:
+        # 如果没有找到冒号，整个字符串被认为是右侧部分
+        result = f":「{text}」"
+    
+    return result
+
 # 给定 example_json_str = """{"prefix": "糖糖: 嘿嘿，最近我在想要不要改变直播风格，你觉得我应该怎么做呀？", "options": [{"user": "你可以试试唱歌直播呀！", "reply": "糖糖: 哇！唱歌直播是个好主意！我可以把我的可爱音色展现给大家听听！谢谢你的建议！", "attribute_change": "Stress: -1.0"}, {"user": "你可以尝试做一些搞笑的小品，逗大家开心。", "reply": "糖糖: 哈哈哈，小品确实挺有趣的！我可以挑战一些搞笑角色，给大家带来欢乐！谢谢你的建议！", "attribute_change": "Stress: -1.0"}, {"user": "你可以尝试做游戏直播，和观众一起玩游戏。", "reply": "糖糖: 游戏直播也不错！我可以和观众一起玩游戏，互动更加有趣！谢谢你的建议！", "attribute_change": "Stress: -1.0"}]}"""
 
 # 我希望建立一个DialogueEvent类
@@ -15,6 +47,7 @@ from util import parsing_condition_string
 # 并且可以通过类似 event["options"]的方式进行调用
 
 # 请用python为我实现
+
 
 class DialogueEvent:
     def __init__(self, json_str=None, user_role = None):
@@ -55,7 +88,7 @@ class DialogueEvent:
 
 
         if user_role is None:
-            self.user_role = "男主"
+            self.user_role = "阿P"
 
 
     def __getitem__(self, key):
@@ -93,10 +126,10 @@ class DialogueEvent:
         return self.data["prefix_emoji"] + self.data["options"][choice_id]["option_emoji"]
     
     def transfer_output( self, choice_id ):
-        ans = self.data["prefix"] + "\n"
-        user_text = self.user_role + ": " + self.data["options"][choice_id]["user"] + "\n"
+        ans = wrap_text_with_colon(self.data["prefix"]) + "\n"
+        user_text = self.user_role + ":「" + self.data["options"][choice_id]["user"] + "」\n"
         ans += user_text
-        ans += self.data["options"][choice_id]["reply"] + "\n"
+        ans += wrap_text_with_colon(self.data["options"][choice_id]["reply"]) + "\n"
 
         # print(self.data["options"][choice_id]['attribute_change'])
         return ans
