@@ -26,7 +26,13 @@ class MemoryPool:
 
     def load_from_events( self, events ):
         for event in tqdm( events ):
-            text, emoji = event.most_neutral_output()
+
+            if len(event["options"])>0:
+                text, emoji = event.most_neutral_output()
+            else:
+                text = event["prefix"]
+                emoji = event["prefix_emoji"]
+                
             embedding = self.embedding( text )
 
             condition = event["condition"]
