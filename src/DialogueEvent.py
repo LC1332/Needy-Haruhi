@@ -141,3 +141,18 @@ class DialogueEvent:
     def get_text_and_emoji(self, choice_id):
         return self.transfer_output(choice_id), self.get_emoji( choice_id )
     
+
+if __name__ == "__main__":
+    example_json_str = """{"prefix": "糖糖: 嘿嘿，最近我在想要不要改变直播风格，你觉得我应该怎么做呀？", "options": [{"user": "你可以试试唱歌直播呀！", "reply": "糖糖: 哇！唱歌直播是个好主意！我可以把我的可爱音色展现给大家听听！谢谢你的建议！", "attribute_change": "Stress: -1.0"}, {"user": "你可以尝试做一些搞笑的小品，逗大家开心。", "reply": "糖糖: 哈哈哈，小品确实挺有趣的！我可以挑战一些搞笑角色，给大家带来欢乐！谢谢你的建议！", "attribute_change": "Stress: -1.0"}, {"user": "你可以尝试做游戏直播，和观众一起玩游戏。", "reply": "糖糖: 游戏直播也不错！我可以和观众一起玩游戏，互动更加有趣！谢谢你的建议！", "attribute_change": "Stress: -1.0"}]}"""
+
+    # 通过给定的json字符串初始化DialogueEvent实例
+    event = DialogueEvent(example_json_str)
+
+    # 通过类似字典的方式访问数据
+    # print(event["options"])  # 打印options字段的内容
+
+    print(event.transfer_output(1) )
+
+    print(event.get_most_neutral())
+
+    print(event.most_neutral_output())
