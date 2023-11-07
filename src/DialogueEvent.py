@@ -126,10 +126,17 @@ class DialogueEvent:
         return self.data["prefix_emoji"] + self.data["options"][choice_id]["option_emoji"]
     
     def transfer_output( self, choice_id ):
-        ans = wrap_text_with_colon(self.data["prefix"]) + "\n"
+        line = wrap_text_with_colon(self.data["prefix"]) + "\n"
+        if line.strip()[0] != "糖":
+            line = "糖糖:" + line
+        ans = line
+
         user_text = self.user_role + ":「" + self.data["options"][choice_id]["user"] + "」\n"
         ans += user_text
-        ans += wrap_text_with_colon(self.data["options"][choice_id]["reply"]) + "\n"
+        line = wrap_text_with_colon(self.data["options"][choice_id]["reply"]) + "\n"
+        if line.strip()[0] != "糖":
+            line = "糖糖:" + line
+        ans += line
 
         # print(self.data["options"][choice_id]['attribute_change'])
         return ans
