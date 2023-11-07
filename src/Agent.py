@@ -16,13 +16,23 @@
 #
 # attribute_change是一个形如{"Darkness":-1, "Stress":1}的字典，如果字典key的值在self.attributes中存在，则累加在上面，不然则汇报warning并跳过
 
+import json
+
 class Agent:
-    def __init__(self):
-        self.attributes = {
+
+    def __init__(self, attributes_str=None):
+        if attributes_str:
+            attributes = json.loads(attributes_str)
+        else:
+            attributes = {
             "Stress": 0,
-            "Darkness": 0,
-            "Affection": 0,
-        }
+            "Darkness": 0, 
+            "Affection": 0
+            }
+        self.attributes = attributes
+        
+    def save_to_str(self):
+        return json.dumps(self.attributes, ensure_ascii=False)
 
     def __getitem__(self, key):
         return self.attributes.get(key)
