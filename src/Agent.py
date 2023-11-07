@@ -30,7 +30,7 @@ class Agent:
             "Affection": 0
             }
         self.attributes = attributes
-        
+
     def save_to_str(self):
         return json.dumps(self.attributes, ensure_ascii=False)
 
@@ -44,6 +44,8 @@ class Agent:
         for key, value in attribute_change.items():
             if key in self.attributes:
                 self.attributes[key] += value
+                if self.attributes[key] < 0:
+                    self.attributes[key] = 0
             else:
                 print(f"Warning: {key} not in attributes, skipping")
 
